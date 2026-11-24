@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>平安住｜裝潢需求思考清單</title>
+<style>
+  :root{
+    --ink:#1f2328; --muted:#5b636d; --line:#c9ced4; --soft:#f3f3f3;
+    --accent:#1f5f8b; --accent-soft:#e8f0f6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#e9ebee;color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",sans-serif;
+    font-size:15px;line-height:1.6}
+  .toolbar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);
+    display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 16px}
+  .toolbar button{font:inherit;font-weight:600;border:1px solid var(--accent);border-radius:6px;
+    padding:7px 16px;cursor:pointer;background:var(--accent);color:#fff}
+  .toolbar button.ghost{background:#fff;color:var(--accent)}
+  .toolbar .hint{color:var(--muted);font-size:13px}
+  .sendbox{margin-top:22px;padding:14px 16px;border:2px solid var(--accent);border-radius:8px;background:var(--accent-soft);text-align:center}
+  .sendbox p{margin:0 0 10px}
+  .sendbox button.big{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:8px;padding:11px 34px;background:var(--accent);color:#fff;cursor:pointer}
+  .sendbox button.big:disabled{opacity:.5;cursor:wait}
+  .sendmsg{margin-top:10px;font-size:14px;line-height:1.6}
+  .sendmsg.ok{color:#1d6b3a;font-weight:700} .sendmsg.err{color:#b3261e}
+  input.blank.need{border-bottom:2px solid #b3261e;background:#fdecea}
+  .page{max-width:210mm;margin:20px auto 40px;background:#fff;padding:16mm 15mm;
+    box-shadow:0 1px 4px rgba(0,0,0,.12)}
+
+  /* 表頭：比照「新家入住添購清單」 */
+  header.brand{border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px}
+  header.brand h1{font-size:24px;margin:0 0 4px;font-weight:700;letter-spacing:.02em}
+  header.brand p{margin:0;font-weight:700}
+  header.brand p.tag{font-weight:400;font-style:italic;color:var(--muted);margin-top:2px}
+  .meta-row{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 0}
+
+  h2{font-size:17px;margin:20px 0 8px;padding:4px 10px;background:var(--soft);
+    border-left:4px solid var(--accent)}
+  p{margin:6px 0}
+  ul.note{margin:4px 0 0;padding-left:20px}
+  ul.note li{margin:2px 0}
+
+  .line{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:7px 0}
+  .line > .lbl{font-weight:600;white-space:nowrap}
+  input.blank{border:0;border-bottom:1px solid var(--ink);font:inherit;padding:0 4px;
+    background:transparent;min-width:60px;color:var(--accent)}
+  input.blank:focus{outline:none;background:var(--accent-soft)}
+  input.w-s{width:56px;min-width:40px} input.w-m{width:150px} input.w-l{width:260px} input.w-full{flex:1;min-width:200px}
+
+  label.opt{display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+  label.opt input[type=checkbox],label.opt input[type=radio]{appearance:none;-webkit-appearance:none;width:15px;height:15px;margin:0;
+    border:1.5px solid var(--ink);border-radius:2px;display:inline-grid;place-content:center;
+    flex:none;background:#fff;cursor:pointer}
+  label.opt input[type=radio]{border-radius:50%}
+  label.opt input:checked{background:var(--accent);border-color:var(--accent)}
+  label.opt input:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;
+    border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+  label.opt input[type=radio]:checked::after{width:6px;height:6px;border:0;border-radius:50%;
+    background:#fff;transform:none}
+  .opts{display:inline-flex;flex-wrap:wrap;gap:4px 14px}
+
+  .hint-ping{color:var(--muted);font-size:13px}
+  .tiers{display:grid;gap:4px;margin:2px 0 6px 4px}
+  label.opt.tier{white-space:normal;gap:8px;flex-wrap:wrap}
+  .tdesc{color:var(--muted);font-size:13px}
+  .tprice{font-size:13px}
+  .ttotal{font-weight:700;color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:5px 7px;vertical-align:middle;text-align:left}
+  th{background:var(--soft);font-weight:700;white-space:nowrap}
+  td.cat{white-space:nowrap;font-weight:600;color:var(--muted);text-align:center}
+  td input.blank:not(.w-s){width:100%;}
+  td input.blank{min-width:0;border-bottom-color:var(--line)}
+  tr{break-inside:avoid}
+  .callout{background:var(--accent-soft);border-radius:4px;padding:6px 10px;margin:6px 0}
+  ol.top3{margin:6px 0;padding-left:22px}
+  ol.top3 li{margin:6px 0}
+  ol.top3 input{width:85%}
+
+  footer.sign{margin-top:22px;border-top:1px solid var(--line);padding-top:10px}
+  footer.sign .co{margin-top:10px;font-weight:700}
+  footer.sign .co span{font-weight:400;color:var(--muted)}
+
+  @page{size:A4;margin:12mm}
+  @media print{
+    html,body{background:#fff;font-size:11pt}
+    .toolbar,.no-print{display:none !important}
+    .page{box-shadow:none;margin:0;max-width:none;padding:0}
+    table{font-size:10pt}
+    h2{break-after:avoid}
+    section{break-inside:auto}
+    section.keep{break-inside:avoid}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+  @media (max-width:640px){
+    .page{padding:18px 14px;margin:0}
+    header.brand h1{font-size:20px}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button id="btnSend" type="button">傳給平安住</button>
+  <button id="btnPrint" type="button" class="ghost">列印／存成 PDF</button>
+  <button id="btnClear" class="ghost" type="button">清空重填</button>
+  <span class="hint">填到一半可以先關掉，內容會保存在這台裝置的瀏覽器裡</span>
+</div>
+
+<main class="page" id="page"></main>
+
+<script>
+/* ---------- 小工具 ---------- */
+let n = 0;
+const id = () => 'f' + (++n);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const blank = (cls='w-m', ph='') => `<input class="blank ${cls}" data-k="${id()}" placeholder="${esc(ph)}">`;
+// opts：type 'radio' 單選 / 'checkbox' 複選；選項文字結尾加「…」代表附填空
+function opts(list, type='radio'){
+  const g = id();
+  return `<span class="opts">` + list.map(o => {
+    const other = o.endsWith('…');
+    const text = other ? o.slice(0,-1) : o;
+    return `<label class="opt"><input type="${type}" name="${g}" data-k="${id()}">${esc(text)}${other ? blank('w-s') : ''}</label>`;
+  }).join('') + `</span>`;
+}
+const line = (label, body) => `<div class="line"><span class="lbl">${esc(label)}</span>${body}</div>`;
+const YN  = ['有','沒有'];
+const YNU = ['有','沒有','不確定'];
+
+
+/* ---------- 預算：依坪數滾動計算（每坪單價可在這裡調整，單位：萬元） ---------- */
+const TIERS = [
+  {name:'局部整修', desc:'油漆、局部水電、單間浴室或廚房', min:2, max:4},
+  {name:'中度翻修', desc:'水電更新、浴廚翻新、部分木作與地板', min:5, max:8},
+  {name:'全室翻新', desc:'拆到見底、管線全換、防水重做（老屋常見）', min:9, max:13},
+];
+function budgetTiers(){
+  const g = id();
+  const rows = TIERS.map((t,i) => `<label class="opt tier"><input type="radio" name="${g}" data-k="${id()}">
+      <b>${t.name}</b><span class="tdesc">${t.desc}</span>
+      <span class="tprice">每坪 ${t.min}～${t.max} 萬<span class="ttotal" data-tier="${i}"></span></span></label>`).join('');
+  return `<div class="tiers">${rows}<label class="opt tier"><input type="radio" name="${g}" data-k="${id()}"><b>不確定</b><span class="tdesc">想先聽平安住建議</span></label></div>`;
+}
+function updateBudget(){
+  const v = parseFloat((document.getElementById('ping').value||'').replace(/[^\d.]/g,''));
+  const ok = v > 0;
+  document.getElementById('pingHint').textContent = ok
+    ? `依室內 ${v} 坪估算（參考值，實際依現場丈量與屋況報價）`
+    : '先在「一、基本資料」填室內坪數，下面會自動算出各等級的參考金額';
+  document.querySelectorAll('.ttotal').forEach(el => {
+    const t = TIERS[+el.dataset.tier];
+    el.textContent = ok ? `　→ 約 ${Math.round(t.min*v)}～${Math.round(t.max*v)} 萬` : '';
+  });
+}
+
+/* ---------- 內容 ---------- */
+const html = `
+<header class="brand">
+  <h1>平安住｜裝潢需求思考清單</h1>
+  <p>平安住股份有限公司　統編 90052437</p>
+  <p>客服專線：07-9623551 分機 555</p>
+  <p class="tag">防水抓漏、居家修繕，裝潢前先把房子的問題看清楚，做好的裝潢才住得久。</p>
+  <div class="meta-row">
+    ${line('填表日期', blank('w-m','例：2026/11/24'))}
+    ${line('平安住承辦人', blank('w-m'))}
+  </div>
+</header>
+
+<section class="keep">
+<h2>使用說明</h2>
+<p>裝潢前先把想法整理好，討論會更快，報價也更準。請在第一次丈量或面談前填寫。</p>
+<ul class="note">
+  <li>可以直接在這個網頁上勾選、打字；<b>還沒想好的就勾「不確定」</b>，我們現場一起討論。</li>
+  <li>家裡有問題的地方（漏水、壁癌、裂縫）請先拍照，面談時一起給我們看。</li>
+  <li>喜歡的裝潢照片可以存在手機裡，或傳到平安住 LINE。</li>
+  <li>填完按<b>「傳給平安住」</b>就會直接送到我們這裡，不用另外存檔；想自己留一份，可以按「列印／存成 PDF」。</li>
+</ul>
+</section>
+
+<section>
+<h2>一、基本資料</h2>
+<div class="line"><span class="lbl">姓名 *</span><input class="blank w-m" id="fName" data-k="${id()}" autocomplete="name"><span class="lbl">手機 *</span><input class="blank w-m" id="fPhone" data-k="${id()}" inputmode="tel" autocomplete="tel"><span class="lbl">LINE</span><input class="blank w-m" id="fLine" data-k="${id()}"></div>
+<div class="line"><span class="lbl">地址</span><input class="blank w-full" id="fAddr" data-k="${id()}" autocomplete="street-address"></div>
+${line('房屋類型', opts(['透天','公寓（無電梯）','大樓','店面／辦公室','其他…']))}
+<div class="line"><span class="lbl">屋齡</span>約${blank('w-s')}年<span class="lbl">室內坪數</span>約<input class="blank w-s" id="ping" inputmode="decimal" data-k="${id()}">坪<span class="lbl">所在樓層</span>${blank('w-s')}樓／共${blank('w-s')}樓</div>
+${line('房屋狀況', opts(['新成屋','中古屋','自己住過多年要翻修']))}
+${line('用途', opts(['自住','出租','準備出售','長輩住'], 'checkbox'))}
+</section>
+
+<section>
+<h2>二、預算與時間</h2>
+<div class="line"><span class="lbl">裝修預算（不含家具家電）</span><span class="hint-ping" id="pingHint">先在「一、基本資料」填室內坪數，下面會自動算出各等級的參考金額</span></div>
+${budgetTiers()}
+<div class="line"><span class="lbl">我心裡的預算</span>約${blank('w-s')}萬元（不含家電）</div>
+${line('預算是否含冷氣', opts(['含','不含，另外準備']))}
+<div class="line"><span class="lbl">希望完工時間</span>${blank('w-s')}年${blank('w-s')}月前</div>
+${line('原因', opts(['搬家','小孩出生／入學','過年','沒有特別時間','其他…']))}
+${line('施工期間', opts(['房子是空的','我們會住在裡面（需分區施工）']))}
+${line('大樓管委會', opts(['有施工規定（時間、押金、搬運）','沒有','不確定']))}
+</section>
+
+<section class="keep">
+<h2>三、住的人與生活習慣</h2>
+<table>
+  <thead><tr><th style="width:18%">項目</th><th>狀況</th><th style="width:34%">備註</th></tr></thead>
+  <tbody>
+    <tr><td>居住人數</td><td>大人${blank('w-s')}人、小孩${blank('w-s')}人</td><td>${blank('','小孩年紀')}</td></tr>
+    <tr><td>長輩同住</td><td>${opts(YN)}</td><td>${blank('','需要扶手、防滑、無門檻嗎？')}</td></tr>
+    <tr><td>寵物</td><td>${opts(['狗','貓','其他','沒有'],'checkbox')}</td><td>${blank('','耐刮地板、寵物門？')}</td></tr>
+    <tr><td>在家工作</td><td>${opts(['常常','偶爾','不會'])}</td><td>${blank('','需要書房或工作角落？')}</td></tr>
+    <tr><td>下廚頻率</td><td>${opts(['每天','假日','很少'])}</td><td>${blank('','大火快炒？排油煙要強一點？')}</td></tr>
+    <tr><td>東西多不多</td><td>${opts(['很多','普通','很少'])}</td><td>${blank('','最需要收納的東西')}</td></tr>
+    <tr><td>常有客人</td><td>${opts(['常常','偶爾','很少'])}</td><td>${blank('','需要客房？')}</td></tr>
+    <tr><td>未來 5 年</td><td>${opts(['會增加家人','小孩長大要分房','沒變化'],'checkbox')}</td><td>${blank('')}</td></tr>
+  </tbody>
+</table>
+</section>
+
+<section>
+<h2>四、現在房子有沒有這些問題</h2>
+<p class="callout"><b>這一段最重要。</b>漏水、水電這些看不到的問題要先處理，不然做好的裝潢會被破壞，重做更貴。</p>
+<table>
+  <thead><tr><th style="width:9%">類別</th><th>檢查項目</th><th style="width:28%">狀況</th><th style="width:22%">備註／位置</th></tr></thead>
+  <tbody>
+    ${[
+      ['漏水','1. 天花板有水漬、黃斑或滴水',YNU],
+      ['漏水','2. 牆面有壁癌、油漆起泡、掉粉',YNU],
+      ['漏水','3. 浴室隔壁牆或樓下天花板會濕',YNU],
+      ['漏水','4. 下雨時窗邊、外牆會滲水',YNU],
+      ['漏水','5. 頂樓或陽台地面有積水、裂縫',YNU],
+      ['水電','6. 水管是舊的（屋齡 20 年以上未換過）',['是','換過','不確定']],
+      ['水電','7. 常跳電，或同時開冷氣、電鍋就跳',YN],
+      ['水電','8. 插座不夠、要一直用延長線',YN],
+      ['水電','9. 熱水不夠熱、水壓太小',YN],
+      ['排水','10. 排水慢、有臭味、地板會回水',YN],
+      ['結構','11. 牆壁或樑柱有明顯裂縫',YNU],
+      ['門窗','12. 窗戶關不緊、太吵、會進風雨、窗框滲水',YN],
+      ['環境','13. 屋內太暗、悶熱、不通風',YN],
+      ['環境','14. 有白蟻、蟑螂或發霉味',YN],
+      ['安全','15. 地板有高低差、磁磚空心或翹起',YN],
+    ].map(([c,t,o]) => `<tr><td class="cat">${c}</td><td>${t}</td><td>${opts(o)}</td><td>${blank('')}</td></tr>`).join('')}
+  </tbody>
+</table>
+${line('拍照給平安住看', opts(['漏水位置','壁癌','裂縫','電箱','浴室'],'checkbox'))}
+</section>
+
+<section>
+<h2>五、每個空間想怎麼做</h2>
+<p>優先順序：<b>A 一定要做</b>、<b>B 想做，看預算</b>、<b>C 可有可無</b></p>
+<table>
+  <thead><tr><th style="width:15%">空間</th><th>想改善或想要的東西</th><th style="width:21%">優先</th></tr></thead>
+  <tbody>
+    ${[
+      ['客廳',[]],
+      ['餐廳',[]],
+      ['廚房',['換廚具','加電器櫃','改中島']],
+      ['主臥',[]],
+      ['小孩房／次臥',[]],
+      ['浴室',['乾濕分離','換馬桶面盆','浴缸改淋浴','重做防水']],
+      ['陽台',['洗衣機位置','曬衣','防水']],
+      ['玄關',['鞋櫃','穿鞋椅','雨具位置']],
+      ['門窗',['換氣密窗（隔音、防颱、防漏）','換大門／防盜門','紗窗紗門'],'要換幾扇、哪些位置'],
+      ['頂樓／外牆',['防水隔熱','外牆修補']],
+      ['其他',[]],
+    ].map(([s,o,ph]) => `<tr><td class="cat" style="text-align:left">${s}</td>
+      <td>${o.length ? opts(o,'checkbox') + '<div style="margin-top:3px">' + blank('',ph||'其他想法') + '</div>' : blank('')}</td>
+      <td>${opts(['A','B','C'])}</td></tr>`).join('')}
+  </tbody>
+</table>
+</section>
+
+<section>
+<h2>六、風格與材料</h2>
+${line('喜歡的風格', opts(['現代簡約','北歐','日式／無印','工業風','鄉村風','古典','沒有特別，好整理就好'],'checkbox'))}
+${line('喜歡的顏色', opts(['白色系','木頭色','灰色系','深色系','其他…'],'checkbox'))}
+${line('地板', opts(['保留原本','磁磚','木地板／超耐磨','SPC 石塑地板','不確定']))}
+${line('天花板', opts(['保留原本','做平釘天花','只做局部（遮樑、藏冷氣管）']))}
+${line('要保留的舊東西', blank('w-full'))}
+${line('已經買好或指定的家具家電', blank('w-full'))}
+${line('參考照片', opts(['已存手機','已傳平安住 LINE','還沒有'],'checkbox'))}
+</section>
+
+<section class="keep">
+<h2>七、最在意的三件事</h2>
+<p>如果預算不夠，一定要保留的三件事：</p>
+<ol class="top3"><li>${blank('')}</li><li>${blank('')}</li><li>${blank('')}</li></ol>
+</section>
+
+<section class="keep">
+<h2>平安住的小提醒</h2>
+<table>
+  <thead><tr><th style="width:22%">提醒</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td><b>先基礎，再美觀</b></td><td>防水、水電、排水先做好，再做木作、油漆、地板，順序反過來會白花錢</td></tr>
+    <tr><td><b>漏水先找原因</b></td><td>壁癌、水漬只補表面一定會再發生，要先找到水從哪裡來</td></tr>
+    <tr><td><b>老屋換管線</b></td><td>屋齡 20 年以上的水管、電線建議趁裝潢一起換，之後再換要拆牆</td></tr>
+    <tr><td><b>預留預備金</b></td><td>預算建議留 10～15% 給拆開後才發現的問題</td></tr>
+    <tr><td><b>變更早點說</b></td><td>施工中想改設計，越早說越省；做完再拆要另計費用</td></tr>
+  </tbody>
+</table>
+</section>
+
+<div class="sendbox no-print">
+  <p><b>填好了嗎？</b>按下面的按鈕，資料會直接送到平安住，我們收到後會跟您聯絡。</p>
+  <input type="text" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
+  <button type="button" class="big" id="btnSend2">傳給平安住</button>
+  <div id="sendMsg" class="sendmsg" role="status"></div>
+</div>
+
+<footer class="sign">
+  <div class="line"><span class="lbl">客戶簽名</span>${blank('w-m')}<span class="lbl">平安住承辦人</span>${blank('w-m')}</div>
+  <div class="co">平安住股份有限公司　<span>統編 90052437　電話 07-9623551 分機 555</span></div>
+</footer>
+`;
+document.getElementById('page').innerHTML = html;
+
+/* ---------- 自動保存（存在本機瀏覽器） ---------- */
+const KEY = 'pinganzhu-reno-checklist-v3';
+const fields = [...document.querySelectorAll('[data-k]')];
+function save(){
+  const d = {};
+  fields.forEach(el => { d[el.dataset.k] = (el.type==='checkbox'||el.type==='radio') ? el.checked : el.value; });
+  try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){}
+}
+function load(){
+  let d = null;
+  try{ d = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e){}
+  if(!d) return;
+  fields.forEach(el => {
+    const v = d[el.dataset.k]; if(v === undefined) return;
+    if(el.type==='checkbox'||el.type==='radio') el.checked = !!v; else el.value = v;
+  });
+}
+load();
+updateBudget();
+document.getElementById('ping').addEventListener('input', updateBudget);
+document.addEventListener('input', save);
+document.addEventListener('change', save);
+
+// 單選可以再點一次取消
+document.addEventListener('click', e => {
+  const r = e.target;
+  if(r.type !== 'radio') return;
+  if(r.dataset.was === '1'){ r.checked = false; r.dataset.was = '0'; save(); }
+  else{ document.querySelectorAll(`input[name="${r.name}"]`).forEach(x => x.dataset.was = '0'); r.dataset.was = '1'; }
+});
+fields.forEach(el => { if(el.type==='radio' && el.checked) el.dataset.was = '1'; });
+
+
+/* ---------- 傳給平安住 ---------- */
+// 平安住專案管理系統後端（Apps Script /exec 網址）
+const API = 'https://script.google.com/macros/s/AKfycbyeiF2_oGk3Ai7vl57RqsBAHKoFXyUlTV7L1tNoNWDRyJSqLU6MPjP8KcCqat1kMjI0Ww/exec';
+const SENT_KEY = KEY + '-sent';
+const clean = t => t.replace(/\s+/g, ' ').trim();
+
+// 把畫面上的內容整理成「段落／項目／填寫內容」，沒填的不送
+function renderNode(n, st){
+  if (n.nodeType === 3) return n.textContent;
+  if (n.nodeType !== 1) return '';
+  if (n.matches('label.opt')){
+    const box = n.querySelector('input[type=checkbox],input[type=radio]');
+    if (!box || !box.checked) return '';
+    st.has = true;
+    return ' ' + clean([...n.childNodes].map(c => renderNode(c, st)).join('')) + ' ';
+  }
+  if (n.matches('input.blank')){ const v = n.value.trim(); if (v) st.has = true; return v ? ' ' + v + ' ' : ' '; }
+  if (n.matches('input')) return '';
+  return [...n.childNodes].map(c => renderNode(c, st)).join('');
+}
+function joinOpts(t){ return clean(t).replace(/ (?=\S)/g, ' ').replace(/\s{2,}/g, ' '); }
+function collect(){
+  const out = [];
+  document.querySelectorAll('#page > section').forEach(sec => {
+    const s = clean(sec.querySelector('h2').textContent).replace(/^[一二三四五六七八九十]+、/, '');
+    sec.querySelectorAll('.line, .tiers, tbody tr, ol.top3 li').forEach(el => {
+      if (el.matches('.line')){
+        let cur = null; const pairs = [];
+        el.childNodes.forEach(c => {
+          if (c.nodeType === 1 && c.matches('span.lbl')){ cur = { l: clean(c.textContent).replace(/\s*\*$/, ''), v: '', st: { has: false } }; pairs.push(cur); return; }
+          if (cur) cur.v += renderNode(c, cur.st);
+        });
+        pairs.forEach(p => { if (p.st.has) out.push({ s, l: p.l, v: joinOpts(p.v) }); });
+      } else if (el.matches('.tiers')){
+        const on = el.querySelector('input:checked'); if (!on) return;
+        const lb = on.closest('label'), q = c => { const x = lb.querySelector(c); return x ? clean(x.textContent) : ''; };
+        const tot = q('.ttotal').replace(/^→\s*/, '');
+        out.push({ s, l: '預算等級', v: q('b') + (q('.tdesc') ? '（' + q('.tdesc') + '）' : '') + (tot ? '，' + tot : '') });
+      } else if (el.matches('li')){
+        const st = { has: false }, v = renderNode(el, st);
+        if (st.has) out.push({ s, l: '一定要保留 ' + ([...el.parentNode.children].indexOf(el) + 1), v: joinOpts(v) });
+      } else {
+        const cells = [...el.children]; if (!cells.some(c => c.querySelector('input'))) return;
+        const st = { has: false };
+        const label = cells.filter(c => !c.querySelector('input')).map(c => clean(c.textContent)).join('｜');
+        const vals = cells.filter(c => c.querySelector('input')).map(c => joinOpts(renderNode(c, st))).filter(Boolean);
+        if (st.has) out.push({ s, l: label, v: vals.join('；') });
+      }
+    });
+  });
+  return out;
+}
+
+function msg(t, cls){ const m = document.getElementById('sendMsg'); m.className = 'sendmsg ' + (cls || ''); m.innerHTML = t; }
+async function send(){
+  const name = document.getElementById('fName'), phone = document.getElementById('fPhone');
+  [name, phone].forEach(el => el.classList.remove('need'));
+  const miss = [];
+  if (!name.value.trim()) miss.push(name);
+  if (phone.value.replace(/\D/g, '').length < 8) miss.push(phone);
+  if (miss.length){
+    miss.forEach(el => el.classList.add('need'));
+    miss[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); miss[0].focus();
+    alert('請先填「姓名」和「手機」，我們才聯絡得到您。'); return;
+  }
+  let sent = null; try { sent = JSON.parse(localStorage.getItem(SENT_KEY) || 'null'); } catch (e) {}
+  if (sent && !confirm(`這份清單已經在 ${sent.at} 傳過（編號 ${sent.id}）。\n要把目前的內容再傳一次嗎？`)) return;
+  if (!sent && !confirm('確定要把這份清單傳給平安住嗎？')) return;
+
+  const answers = collect();
+  const form = { type: 'reno', name: name.value.trim(), phone: phone.value.trim(),
+    address: document.getElementById('fAddr').value.trim(), hp: document.getElementById('hp').value, answers };
+  const btns = [document.getElementById('btnSend'), document.getElementById('btnSend2')];
+  btns.forEach(b => { b.disabled = true; b.textContent = '傳送中…'; });
+  msg('傳送中，請稍候…');
+  try {
+    const ac = new AbortController(); const t = setTimeout(() => ac.abort(), 45000);
+    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'submitForm', form }), signal: ac.signal });
+    clearTimeout(t);
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || '傳送失敗');
+    const at = new Date().toLocaleString('zh-TW', { hour12: false });
+    try { localStorage.setItem(SENT_KEY, JSON.stringify({ id: j.id, at })); } catch (e) {}
+    msg(`✓ 已傳給平安住，編號 <b>${j.id}</b>。我們收到後會盡快跟您聯絡。<br>想自己留一份，可以按上方「列印／存成 PDF」。`, 'ok');
+  } catch (e) {
+    msg(`傳送沒有成功（${e.name === 'AbortError' ? '連線逾時' : e.message}）。<br>請稍後再試，或按「列印／存成 PDF」後用 LINE 傳給我們，也可以直接來電 07-9623551 分機 555。`, 'err');
+  } finally {
+    btns.forEach(b => { b.disabled = false; b.textContent = '傳給平安住'; });
+  }
+}
+document.getElementById('btnSend').onclick = () => { document.getElementById('btnSend2').scrollIntoView({ behavior: 'smooth', block: 'center' }); send(); };
+document.getElementById('btnSend2').onclick = send;
+
+document.getElementById('btnPrint').onclick = () => window.print();
+document.getElementById('btnClear').onclick = () => {
+  if(!confirm('確定要清空所有填寫內容嗎？')) return;
+  fields.forEach(el => { if(el.type==='checkbox'||el.type==='radio'){ el.checked=false; el.dataset.was='0'; } else el.value=''; });
+  try{ localStorage.removeItem(KEY); localStorage.removeItem(SENT_KEY); }catch(e){}
+  updateBudget(); msg('');
+};
+</script>
+</body>
+</html>

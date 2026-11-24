@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>平安住｜漏水評估申請</title>
+<style>
+  :root{--ink:#1f2328;--muted:#5b636d;--line:#c9ced4;--soft:#f3f3f3;--accent:#1f5f8b;--accent-soft:#e8f0f6;--err:#b3261e}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#e9ebee;color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",sans-serif;font-size:16px;line-height:1.6}
+  .page{max-width:720px;margin:20px auto 40px;background:#fff;padding:28px 26px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+  @media (max-width:640px){.page{margin:0;padding:20px 16px 32px}}
+
+  header.brand{display:flex;gap:14px;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:16px}
+  header.brand img{width:54px;height:auto;flex:none;margin-top:4px}
+  header.brand h1{font-size:23px;margin:0 0 4px;font-weight:700}
+  header.brand p{margin:0;font-weight:700;font-size:15px}
+  header.brand p.tag{font-weight:400;font-style:italic;color:var(--muted);margin-top:2px}
+  header.brand a{color:inherit}
+
+  .intro{background:var(--accent-soft);border-radius:6px;padding:12px 14px;font-size:15px}
+  .intro b.big{display:block;font-size:18px;margin-bottom:4px}
+  .fee{font-size:14px;color:var(--muted);margin:10px 0 0}
+
+  h2{font-size:17px;margin:24px 0 10px;padding:4px 10px;background:var(--soft);border-left:4px solid var(--accent)}
+  h2 small{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+  .field{margin:0 0 14px}
+  .field > .lbl{display:block;font-weight:700;margin-bottom:5px}
+  .req{color:var(--err);margin-left:2px}
+  .hint{font-size:13px;color:var(--muted);font-weight:400}
+  input[type=text],input[type=tel],input[type=email],select,textarea{
+    width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+  textarea{min-height:96px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+  .two{display:grid;gap:12px}
+  @media (min-width:560px){.two{grid-template-columns:1fr 1fr}}
+  .bad input,.bad select,.bad .shot{border-color:var(--err) !important;background:#fdecea}
+  .bad .errt{display:block}
+  .errt{display:none;color:var(--err);font-size:13px;margin-top:3px}
+
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opts label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer;background:#fff;font-size:15px}
+  .opts label:has(input:checked){background:var(--accent);border-color:var(--accent);color:#fff}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+
+  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .shot{position:relative;border:2px dashed var(--line);border-radius:8px;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;cursor:pointer;background:#fafbfc;overflow:hidden;font-size:14px;color:var(--muted);padding:6px}
+  .shot b{color:var(--ink);font-size:15px}
+  .shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .shot .rm{position:absolute;top:4px;right:4px;z-index:2;background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:4px;font-size:12px;padding:3px 7px;cursor:pointer}
+  .shot .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:2px}
+  .shot input{display:none}
+  .extra{margin-top:10px}
+
+  .consent{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:6px 0 0}
+  .consent input{width:18px;height:18px;margin-top:3px;flex:none}
+  .sendbox{margin-top:22px;text-align:center}
+  button.big{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:8px;padding:12px 40px;background:var(--accent);color:#fff;cursor:pointer;width:100%;max-width:360px}
+  button.big:disabled{opacity:.5;cursor:wait}
+  .sendmsg{margin-top:12px;font-size:15px;line-height:1.6}
+  .sendmsg.ok{color:#1d6b3a;font-weight:700} .sendmsg.err{color:var(--err)}
+  .done{text-align:center;padding:30px 10px}
+  .done .no{font-size:22px;font-weight:700;color:var(--accent);margin:6px 0}
+  footer{margin-top:26px;border-top:1px solid var(--line);padding-top:10px;font-size:14px;color:var(--muted)}
+  footer b{color:var(--ink)}
+  a.back{font-size:14px;color:var(--accent)}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="brand">
+    <img src="assets/logo.png" alt="平安住">
+    <div>
+      <h1>平安住｜漏水評估申請</h1>
+      <p>平安住股份有限公司　統編 90052437</p>
+      <p>客服專線：<a href="tel:079623551,555">07-9623551 分機 555</a></p>
+      <p class="tag">防水抓漏、居家修繕，入住前後有任何房屋問題，歡迎來電諮詢。</p>
+    </div>
+  </header>
+
+  <form id="f" novalidate>
+  <div class="intro">
+    <b class="big">先傳三張照片，師傅看得懂，才排得準</b>
+    漏水的源頭常常不在你看到的那面牆。填好表單、附上照片，師傅會先判斷可能的原因與做法，再跟您約現場評估。
+    <p class="fee">現場評估車馬費 NT$500～1,000；需要高空繩索或整棟評估 NT$2,000～8,000。簽約後都可以折抵工程款。</p>
+  </div>
+
+  <h2>01 漏水照片 <small>近照、遠照各一張，第三張拍漏水對應的外側或樓上</small></h2>
+  <div class="field" data-need="photos">
+    <div class="shots" id="shots"></div>
+    <span class="errt">請至少附上近照、遠照、第三張這三張照片</span>
+    <div class="extra"><span class="lbl hint">補充照片（選填，最多 3 張）</span><div class="shots" id="extras" style="margin-top:6px"></div></div>
+  </div>
+
+  <h2>02 漏水地點</h2>
+  <div class="two">
+    <div class="field" data-need="city"><span class="lbl">縣市<span class="req">*</span></span>
+      <select name="city"><option value="">請選擇</option><option>高雄市</option><option>台南市</option><option>屏東縣</option><option>台中市</option><option>嘉義縣市</option><option>其他</option></select>
+      <span class="errt">請選擇縣市</span></div>
+    <div class="field" data-need="district"><span class="lbl">行政區<span class="req">*</span></span>
+      <input type="text" name="district" placeholder="例：苓雅區"><span class="errt">請填行政區</span></div>
+  </div>
+  <div class="field" data-need="street"><span class="lbl">詳細地址<span class="req">*</span></span>
+    <input type="text" name="street" placeholder="例：四維二路 146 號" autocomplete="street-address"><span class="errt">請填詳細地址</span></div>
+  <div class="two">
+    <div class="field" data-need="unit"><span class="lbl">樓層／戶別<span class="req">*</span></span>
+      <input type="text" name="unit" placeholder="例：5 樓之 2"><span class="errt">請填樓層或戶別</span></div>
+    <div class="field"><span class="lbl">社區或大樓名稱</span><input type="text" name="building"></div>
+  </div>
+  <div class="two">
+    <div class="field" data-need="btype"><span class="lbl">建物型態<span class="req">*</span></span>
+      <select name="btype"><option value="">請選擇</option><option>電梯大樓</option><option>公寓（無電梯）</option><option>透天厝</option><option>廠辦／商業大樓</option><option>其他</option></select>
+      <span class="errt">請選擇建物型態</span></div>
+    <div class="field"><span class="lbl">整棟總樓層</span><input type="text" name="floors" inputmode="numeric" placeholder="例：12"></div>
+  </div>
+
+  <h2>03 漏水狀況</h2>
+  <div class="field"><span class="lbl">漏水位置 <span class="hint">可複選</span></span>
+    <div class="opts" data-multi="where">
+      <label><input type="checkbox" value="外牆">外牆</label><label><input type="checkbox" value="窗框周邊">窗框周邊</label>
+      <label><input type="checkbox" value="天花板">天花板</label><label><input type="checkbox" value="室內牆面壁癌">室內牆面壁癌</label>
+      <label><input type="checkbox" value="浴室">浴室</label><label><input type="checkbox" value="陽台">陽台</label>
+      <label><input type="checkbox" value="頂樓">頂樓</label><label><input type="checkbox" value="不確定">不確定</label>
+    </div></div>
+  <div class="two">
+    <div class="field" data-need="howlong"><span class="lbl">漏多久了<span class="req">*</span></span>
+      <select name="howlong"><option value="">請選擇</option><option>這幾天才開始</option><option>一個月內</option><option>半年內</option><option>一年以上</option><option>斷斷續續很多年</option></select>
+      <span class="errt">請選擇</span></div>
+    <div class="field"><span class="lbl">什麼時候會漏</span>
+      <select name="when"><option value="">請選擇</option><option>下雨才漏</option><option>雨停後幾天還在漏</option><option>沒下雨也會漏</option><option>用水時才漏</option><option>不確定</option></select></div>
+  </div>
+  <div class="two">
+    <div class="field"><span class="lbl">樓上狀況</span>
+      <select name="upstairs"><option value="">請選擇</option><option>不涉及樓上（外牆或頂樓）</option><option>樓上願意配合處理</option><option>樓上不願意配合或聯絡不到</option><option>我就是樓上，想處理樓下的問題</option><option>不確定</option></select></div>
+    <div class="field"><span class="lbl">之前修過嗎</span>
+      <select name="fixed"><option value="">請選擇</option><option>沒有修過</option><option>自己補過矽利康或防水漆</option><option>請師傅修過但沒好</option><option>修過好一陣子又漏</option></select></div>
+  </div>
+  <div class="field"><span class="lbl">補充說明</span>
+    <textarea name="more" placeholder="例：颱風天特別嚴重、樓下鄰居反映天花板滴水…"></textarea></div>
+
+  <h2>04 聯絡方式</h2>
+  <div class="two">
+    <div class="field" data-need="name"><span class="lbl">姓名<span class="req">*</span></span>
+      <input type="text" name="name" autocomplete="name"><span class="errt">請填姓名</span></div>
+    <div class="field"><span class="lbl">您的身分</span>
+      <select name="role"><option value="">請選擇</option><option>屋主</option><option>承租人</option><option>管委會／總幹事</option><option>代理親友詢問</option><option>其他</option></select></div>
+  </div>
+  <div class="two">
+    <div class="field" data-need="phone"><span class="lbl">手機<span class="req">*</span></span>
+      <input type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="例：0912-345-678"><span class="errt">請填正確的手機號碼</span></div>
+    <div class="field"><span class="lbl">Email</span>
+      <input type="email" name="email" autocomplete="email"></div>
+  </div>
+  <div class="field"><span class="lbl">方便聯絡的時段</span>
+    <div class="opts" data-multi="time">
+      <label><input type="checkbox" value="平日上午">平日上午</label><label><input type="checkbox" value="平日下午">平日下午</label>
+      <label><input type="checkbox" value="平日晚上">平日晚上</label><label><input type="checkbox" value="週六">週六</label>
+      <label><input type="checkbox" value="都可以">都可以</label>
+    </div></div>
+  <div class="field" data-need="agree">
+    <label class="consent"><input type="checkbox" name="agree">我同意平安住蒐集上述資料，用於漏水評估、報價與後續聯繫。</label>
+    <span class="errt">請勾選同意，我們才能處理您的資料</span></div>
+  <input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
+
+  <div class="sendbox">
+    <button type="submit" class="big" id="btnSend">送出評估申請</button>
+    <div id="sendMsg" class="sendmsg" role="status"></div>
+  </div>
+  </form>
+
+  <div id="done" class="done" hidden>
+    <div style="font-size:40px">✓</div>
+    <b>已收到您的漏水評估申請</b>
+    <div class="no" id="doneNo"></div>
+    <p>師傅看過照片後會盡快跟您聯絡、約現場評估時間。<br>急件請直接來電 <a href="tel:079623551,555">07-9623551 分機 555</a>。</p>
+    <p><a class="back" href="./">回到平安住客戶表單</a></p>
+  </div>
+
+  <footer><b>平安住股份有限公司</b>　統編 90052437　電話 07-9623551 分機 555</footer>
+</main>
+
+<script>
+// 平安住專案管理系統後端（Apps Script /exec 網址）
+const API = 'https://script.google.com/macros/s/AKfycbyeiF2_oGk3Ai7vl57RqsBAHKoFXyUlTV7L1tNoNWDRyJSqLU6MPjP8KcCqat1kMjI0Ww/exec';
+const F = document.getElementById('f');
+const MAIN = ['近照', '遠照', '第三張'];
+const photos = { main: [null, null, null], extra: [null, null, null] };
+
+/* ---------- 照片：手機上直接拍或選相簿，自動縮成 1600px ---------- */
+async function shrink(file, max = 1600){
+  let bmp;
+  try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch (e) { bmp = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('這個檔案不是照片')); i.src = URL.createObjectURL(file); }); }
+  const w = bmp.width, h = bmp.height, sc = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * sc); c.height = Math.round(h * sc);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.8);
+}
+function slot(kind, i, title, sub){
+  const d = photos[kind][i];
+  return `<label class="shot" data-k="${kind}" data-i="${i}">
+    ${d ? `<img src="${d}" alt=""><button type="button" class="rm" data-rm="${kind}|${i}">移除</button><span class="cap">${title}</span>`
+        : `<b>＋ ${title}</b><span>${sub}</span>`}
+    <input type="file" accept="image/*"></label>`;
+}
+function drawShots(){
+  document.getElementById('shots').innerHTML =
+    slot('main', 0, '近照', '漏水處近拍') + slot('main', 1, '遠照', '看得出位置') + slot('main', 2, '第三張', '外側或樓上');
+  document.getElementById('extras').innerHTML = [0, 1, 2].map(i => slot('extra', i, '補充 ' + (i + 1), '選填')).join('');
+  document.querySelectorAll('.shot input').forEach(inp => inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return; const lb = inp.closest('.shot');
+    lb.querySelector('b') && (lb.querySelector('b').textContent = '處理中…');
+    try { photos[lb.dataset.k][+lb.dataset.i] = await shrink(f); }
+    catch (e) { alert('照片讀取失敗：' + e.message); }
+    drawShots(); check('photos');
+  });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = e => {
+    e.preventDefault(); const [k, i] = b.dataset.rm.split('|'); photos[k][+i] = null; drawShots();
+  });
+}
+drawShots();
+
+/* ---------- 檢查必填 ---------- */
+const val = n => (F.elements[n] && F.elements[n].value || '').trim();
+const RULES = {
+  photos: () => photos.main.every(Boolean),
+  city: () => !!val('city'), district: () => !!val('district'), street: () => !!val('street'),
+  unit: () => !!val('unit'), btype: () => !!val('btype'), howlong: () => !!val('howlong'),
+  name: () => !!val('name'), phone: () => val('phone').replace(/\D/g, '').length >= 8,
+  agree: () => F.elements.agree.checked
+};
+function check(k){ const el = document.querySelector(`[data-need="${k}"]`); const ok = RULES[k](); el && el.classList.toggle('bad', !ok); return ok; }
+F.addEventListener('change', e => { const w = e.target.closest('[data-need]'); if (w && w.classList.contains('bad')) check(w.dataset.need); });
+F.addEventListener('input', e => { const w = e.target.closest('[data-need]'); if (w && w.classList.contains('bad')) check(w.dataset.need); });
+
+const multi = k => [...document.querySelectorAll(`[data-multi="${k}"] input:checked`)].map(x => x.value).join('、');
+function answers(){
+  const A = [], add = (s, l, v) => { if (v) A.push({ s, l, v }); };
+  add('漏水地點', '縣市', val('city')); add('漏水地點', '行政區', val('district')); add('漏水地點', '詳細地址', val('street'));
+  add('漏水地點', '樓層／戶別', val('unit')); add('漏水地點', '社區或大樓名稱', val('building'));
+  add('漏水地點', '建物型態', val('btype')); add('漏水地點', '整棟總樓層', val('floors'));
+  add('漏水狀況', '漏水位置', multi('where')); add('漏水狀況', '漏多久了', val('howlong'));
+  add('漏水狀況', '什麼時候會漏', val('when')); add('漏水狀況', '樓上狀況', val('upstairs'));
+  add('漏水狀況', '之前修過嗎', val('fixed')); add('漏水狀況', '補充說明', val('more'));
+  add('聯絡方式', '姓名', val('name')); add('聯絡方式', '身分', val('role')); add('聯絡方式', '手機', val('phone'));
+  add('聯絡方式', 'Email', val('email')); add('聯絡方式', '方便聯絡時段', multi('time'));
+  return A;
+}
+
+/* ---------- 送出 ---------- */
+function msg(t, cls){ const m = document.getElementById('sendMsg'); m.className = 'sendmsg ' + (cls || ''); m.innerHTML = t; }
+F.onsubmit = async e => {
+  e.preventDefault();
+  const bad = Object.keys(RULES).filter(k => !check(k));
+  if (bad.length){
+    const el = document.querySelector(`[data-need="${bad[0]}"]`); el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    msg('還有 ' + bad.length + ' 個必填項目沒填，紅框的地方請再看一下。', 'err'); return;
+  }
+  const btn = document.getElementById('btnSend'); btn.disabled = true; btn.textContent = '傳送中…';
+  msg('照片上傳中，請稍候，不要關閉頁面…');
+  const pics = [];
+  photos.main.forEach((d, i) => d && pics.push({ label: MAIN[i], data: d }));
+  photos.extra.forEach((d, i) => d && pics.push({ label: '補充' + (i + 1), data: d }));
+  const form = { type: 'leak', name: val('name'), phone: val('phone'), email: val('email'),
+    address: [val('city'), val('district'), val('street'), val('unit')].join(''), hp: val('hp'), answers: answers(), photos: pics };
+  try {
+    const ac = new AbortController(); const t = setTimeout(() => ac.abort(), 90000);
+    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'submitForm', form }), signal: ac.signal });
+    clearTimeout(t);
+    const j = await r.json(); if (!j.ok) throw new Error(j.error || '傳送失敗');
+    F.hidden = true; document.getElementById('done').hidden = false;
+    document.getElementById('doneNo').textContent = '編號 ' + j.id; window.scrollTo(0, 0);
+  } catch (err) {
+    msg(`送出沒有成功（${err.name === 'AbortError' ? '連線逾時' : err.message}）。<br>請稍後再試，或直接來電 07-9623551 分機 555。`, 'err');
+    btn.disabled = false; btn.textContent = '送出評估申請';
+  }
+};
+</script>
+</body>
+</html>
